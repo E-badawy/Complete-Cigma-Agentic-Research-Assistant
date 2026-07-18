@@ -1,0 +1,9 @@
+{
+    "library_name": "Bioinformatics",
+    "folder_path": "C:\\Users\\hp\\AppData\\Local\\Temp\\tmpaqw4bfoe",
+    "documents": 17,
+    "chunks": 102,
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "llm": "llama-3.3-70b-versatile",
+    "created_at": "2026-07-18T02:15:16.314002"
+}
