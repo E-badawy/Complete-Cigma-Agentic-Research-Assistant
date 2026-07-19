@@ -121,7 +121,11 @@ class LibraryService:
         if not library_path.exists():
             raise Exception(f"Library '{name}' not found.")
 
+        t = time.time()
+        
         db = load_vectorstore(str(library_path))
+
+        print(f"FAISS loaded in {time.time()-t:.2f}s")
 
         metadata_file = library_path / "metadata.json"
 

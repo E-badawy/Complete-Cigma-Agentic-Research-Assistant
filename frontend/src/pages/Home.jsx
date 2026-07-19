@@ -270,7 +270,6 @@ function Home() {
 
         <AboutSection />
 
-    <Footer />
 
 </div>
 );
