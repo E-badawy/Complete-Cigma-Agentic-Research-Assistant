@@ -1,14 +1,16 @@
 from app.services.library_service import LibraryService
 from app.services.llm_service import generate
-library_service = LibraryService()
 
+def get_library_service():
+    print("Creating LibraryService...")
+    return LibraryService()
 
 def retrieve_local_context(
     library_name: str,
     question: str,
     k: int = 8
 ):
-
+    library_service = get_library_service()
     db, metadata = library_service.load_library(library_name)
 
     results = db.similarity_search_with_score(
