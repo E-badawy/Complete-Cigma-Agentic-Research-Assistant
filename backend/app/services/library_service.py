@@ -1,18 +1,39 @@
-import json
-import shutil
-import tempfile
-from pathlib import Path
-from datetime import datetime
-from fastapi import UploadFile
+import time
 
-from app.rag.loader import load_documents
-from app.rag.splitter import split_documents
-from app.rag.vectorstore import (
-    create_vectorstore,
-    save_vectorstore,
-    load_vectorstore
-)
+print("=" * 60)
+print("Loading library_service.py...")
+overall = time.time()
+
+t = time.time()
+import json
+print(f"✓ json imported in {time.time()-t:.2f}s")
+
+t = time.time()
+import shutil
+print(f"✓ shutil imported in {time.time()-t:.2f}s")
+
+t = time.time()
+import tempfile
+print(f"✓ tempfile imported in {time.time()-t:.2f}s")
+
+t = time.time()
+from pathlib import Path
+print(f"✓ pathlib imported in {time.time()-t:.2f}s")
+
+t = time.time()
+from datetime import datetime
+print(f"✓ datetime imported in {time.time()-t:.2f}s")
+
+t = time.time()
+from fastapi import UploadFile
+print(f"✓ UploadFile imported in {time.time()-t:.2f}s")
+
+t = time.time()
 from app.config.settings import settings
+print(f"✓ settings imported in {time.time()-t:.2f}s")
+
+print(f"library_service.py imports completed in {time.time()-overall:.2f}s")
+print("=" * 60)
 
 
 LIBRARIES_PATH = Path("data/libraries")
@@ -23,6 +44,19 @@ class LibraryService:
 
     def create_library(self, name: str, folder_path: str):
 
+        print("Loading RAG modules...")
+
+        t = time.time()
+
+        from app.rag.loader import load_documents
+        from app.rag.splitter import split_documents
+        from app.rag.vectorstore import (
+            create_vectorstore,
+            save_vectorstore,
+        )
+
+        print(f"✓ RAG modules loaded in {time.time()-t:.2f}s")
+        
         library_path = LIBRARIES_PATH / name.lower().replace(" ", "_")
 
         if library_path.exists():
@@ -76,6 +110,12 @@ class LibraryService:
 
     def load_library(self, name: str):
 
+        t = time.time()
+
+        from app.rag.vectorstore import load_vectorstore
+
+        print(f"✓ load_vectorstore imported in {time.time()-t:.2f}s")
+        
         library_path = LIBRARIES_PATH / name.lower().replace(" ", "_")
 
         if not library_path.exists():

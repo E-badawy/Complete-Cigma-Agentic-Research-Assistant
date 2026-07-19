@@ -1,11 +1,6 @@
 from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import StreamingResponse
 
-from app.services.audio_service import (
-    speech_to_text,
-    text_to_speech
-)
-
 router = APIRouter(
     prefix="/audio",
     tags=["Audio"]
@@ -16,6 +11,7 @@ router = APIRouter(
 async def transcribe_audio(
     file: UploadFile = File(...)
 ):
+    from app.services.audio_service import speech_to_text
 
     text = speech_to_text(file.file)
 
@@ -28,6 +24,7 @@ async def transcribe_audio(
 def generate_audio(
     text: str
 ):
+    from app.services.audio_service import text_to_speech
 
     audio = text_to_speech(text)
 

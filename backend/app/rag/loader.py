@@ -1,22 +1,30 @@
 from pathlib import Path
 
-from langchain_community.document_loaders import (
-    PyPDFLoader,
-    TextLoader,
-    Docx2txtLoader,
-)
 
-SUPPORTED_EXTENSIONS = {
-    ".pdf": PyPDFLoader,
-    ".txt": TextLoader,
-    ".docx": Docx2txtLoader,
-}
+def get_supported_loaders():
+    """
+    Lazy-load document loaders only when needed.
+    This avoids importing heavy LangChain modules during FastAPI startup.
+    """
+    from langchain_community.document_loaders import (
+        PyPDFLoader,
+        TextLoader,
+        Docx2txtLoader,
+    )
+
+    return {
+        ".pdf": PyPDFLoader,
+        ".txt": TextLoader,
+        ".docx": Docx2txtLoader,
+    }
 
 
 def load_documents(folder_path: str):
     """
     Loads every supported document inside a folder recursively.
     """
+
+    supported_extensions = get_supported_loaders()
 
     documents = []
 
@@ -27,14 +35,15 @@ def load_documents(folder_path: str):
 
     for file in folder.rglob("*"):
 
-        if file.suffix.lower() in SUPPORTED_EXTENSIONS:
+        suffix = file.suffix.lower()
 
-            loader = SUPPORTED_EXTENSIONS[file.suffix.lower()](str(file))
+        if suffix in supported_extensions:
+
+            loader = supported_extensions[suffix](str(file))
 
             try:
                 docs = loader.load()
 
-                # Add useful metadata
                 for doc in docs:
                     doc.metadata["source"] = str(file)
                     doc.metadata["filename"] = file.name

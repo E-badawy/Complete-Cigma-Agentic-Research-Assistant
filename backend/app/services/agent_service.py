@@ -1,13 +1,4 @@
-from app.services.search.search_service import search
-from app.services.research_service import retrieve_local_context
-from app.services.llm_service import generate
-from app.services.query_optimizer import optimize_query
-from app.services.evidence_ranker import rank_web
-from app.services.library_service import LibraryService
-from app.services.citation_service import generate_references
 from app.services.memory_service import memory_service
-
-library_service = LibraryService()
 
 
 def run_agent(
@@ -16,6 +7,22 @@ def run_agent(
     search_web: bool = True,
     session_id: str = "default",
 ):
+    """
+    Main research agent.
+
+    Heavy imports are intentionally performed inside this function
+    to keep FastAPI startup fast.
+    """
+
+    # --------------------------------------------------
+    # Lazy Imports
+    # --------------------------------------------------
+    from app.services.search.search_service import search
+    from app.services.research_service import retrieve_local_context
+    from app.services.llm_service import generate
+    from app.services.query_optimizer import optimize_query
+    from app.services.evidence_ranker import rank_web
+    from app.services.citation_service import generate_references
 
     # --------------------------------------------------
     # INITIALIZE
@@ -31,7 +38,7 @@ def run_agent(
 
         local = retrieve_local_context(
             library_name,
-            question
+            question,
         )
 
         local_answer = local.get("context")
@@ -109,42 +116,42 @@ Abstract:
     # PROMPT
     # --------------------------------------------------
     prompt = f"""
-You are Cigma Agentic Research Assistant.
+    You are Cigma Agentic Research Assistant.
 
-Use BOTH the user's uploaded research library and the latest scientific literature.
+    Use BOTH the user's uploaded research library and the latest scientific literature.
 
-Previous Conversation
+    Previous Conversation
 
-{conversation}
+    {conversation}
 
-Question
+    Question
 
-{question}
+    {question}
 
-Available Evidence
+    Available Evidence
 
-{context}
+    {context}
 
-Instructions
+    Instructions
 
-- Use the local library whenever applicable.
-- Support claims using the latest scientific evidence.
-- Never fabricate information.
-- If evidence is insufficient, clearly state so.
-- Prefer evidence from the supplied context over general knowledge.
+    - Use the local library whenever applicable.
+    - Support claims using the latest scientific evidence.
+    - Never fabricate information.
+    - If evidence is insufficient, clearly state so.
+    - Prefer evidence from the supplied context over general knowledge.
 
-Produce a professional report using this structure:
+    Produce a professional report using this structure:
 
-# Executive Summary
+    # Executive Summary
 
-# Detailed Analysis
+    # Detailed Analysis
 
-# Key Findings
+    # Key Findings
 
-# Limitations
+    # Limitations
 
-# References
-"""
+    # References
+    """
 
     # --------------------------------------------------
     # GENERATE RESPONSE

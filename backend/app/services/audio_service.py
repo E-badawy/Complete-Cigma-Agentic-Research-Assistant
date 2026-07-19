@@ -2,17 +2,33 @@ from io import BytesIO
 import tempfile
 import os
 
-import whisper
 from gtts import gTTS
 
-# Load Whisper once
-model = whisper.load_model("base")
+# Global Whisper model cache
+_model = None
+
+
+def get_whisper_model():
+    """
+    Lazily loads the Whisper model only on first use.
+    """
+    global _model
+
+    if _model is None:
+        import whisper
+
+        print("Loading Whisper model...")
+        _model = whisper.load_model("base")
+        print("✓ Whisper model loaded")
+
+    return _model
 
 
 def speech_to_text(audio_file):
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp:
+    model = get_whisper_model()
 
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp:
         temp.write(audio_file.read())
         temp_path = temp.name
 
@@ -29,7 +45,7 @@ def text_to_speech(text: str):
 
     tts = gTTS(
         text=text,
-        lang="en"
+        lang="en",
     )
 
     tts.write_to_fp(audio)
